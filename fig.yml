@@ -6,7 +6,7 @@ db:
     MYSQL_DATABASE: javatest
     MYSQL_ROOT_PASSWORD: mysql
   ports:
-    - "3306"
+    - "3306:3306"
 
 dbinit:
   image: mysql
@@ -17,12 +17,31 @@ dbinit:
   links:
     - db:mysql
 
+memcache1:
+  image: sylvainlasnier/memcached
+  environment:
+    MAX_MEM: 1024
+    MAX_CONN: 10000
+  ports:
+    - "11211:11211"
+
+memcache2:
+  image: sylvainlasnier/memcached
+  environment:
+    MAX_MEM: 1024
+    MAX_CONN: 10000
+  ports:
+    - "11212:11211"
+
+
 app:
   build: .
   links:
     - dbinit
     - db:mysql
+    - memcache1
+    - memcache2
   environment:
     TOMCAT_PASS: admin
   ports:
-    - "8080"
+    - "8080:8080"

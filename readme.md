@@ -4,6 +4,7 @@
     调试脚本：停止，删除；重构，启动；查看日志；
         fig stop && fig rm --force -v && fig build && fig up -d && fig ps && fig logs
 
+    完成tomcat集群配置，memcached进行session缓存，暂不支持tomcat8.
 
 2015-01-21
     更换mysql 镜像包
