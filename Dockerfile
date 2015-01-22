@@ -24,17 +24,16 @@ RUN sed -i '/<Connector port="8080"/,/\/>/d' /tomcat/conf/server.xml
 
 ###优化线程池配置
 ####<Executor name="tomcatThreadPool" namePrefix="catalina-exec-"  maxThreads="800" minSpareThreads="1000" />
-RUN  sed -i '/<Executor name="tomcatThreadPool"/,/\/>/{s/150/800/}' /tomcat/conf/server.xml
+RUN  sed -i '/<Executor name="tomcatThreadPool"/,/\/>/{s/150/1000/}' /tomcat/conf/server.xml
 RUN  sed -i '/<Executor name="tomcatThreadPool"/,/\/>/{s/4/1000/}' /tomcat/conf/server.xml
 ####<Connector executor="tomcatThreadPool" port="80" protocol="HTTP/1.1"  connectionTimeout="20000"
 #### enableLookups="false" redirectPort="8443" URIEncoding="UTF-8" acceptCount="1000" />
-RUN  sed -i '/Connector executor="tomcatThreadPool"/a \nenableLookups="false" URIEncoding="UTF-8" acceptCount="1000"' /tomcat/conf/server.xml
-
+RUN  sed -i '/Connector executor="tomcatThreadPool"/a enableLookups="false" URIEncoding="UTF-8" acceptCount="1000"' /tomcat/conf/server.xml
 
 
 ##正则表达式编辑xml,增加应用部署目录
-RUN  sed -i '/<Host/,/<\/Host>/{/<Valve/,/<\/Valve>/{/pattern=/{s/\/>/\/> \n <Context docBase="\/home\/test" path="\/test" crossContext="true" privileged="true" \/>/}}}' /tomcat/conf/server.xml
-
+##**对应的目录必须存在，否则启动会报错
+#RUN  sed -i '/<Host/,/<\/Host>/{/<Valve/,/<\/Valve>/{/pattern=/{s/\/>/\/> \n <Context docBase="\/home\/test" path="\/test" crossContext="true" privileged="true" \/>/}}}' /tomcat/conf/server.xml
 
 
 #清除管理用户

@@ -1,18 +1,19 @@
 db:
-  image: orchardup/mysql
+  image: mysql
   environment:
     MYSQL_USER: java
     MYSQL_PASSWORD: java
     MYSQL_DATABASE: javatest
+    MYSQL_ROOT_PASSWORD: mysql
   ports:
     - "3306"
 
 dbinit:
-  image: orchardup/mysql
+  image: mysql
   entrypoint: /bin/bash
   volumes:
     - .:/host
-  command: -c "sleep 4; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
+  command: -c "sleep 18; mysql -u java --password=java -h mysql javatest < /host/init.sql; exit 0"
   links:
     - db:mysql
 
@@ -21,5 +22,7 @@ app:
   links:
     - dbinit
     - db:mysql
+  environment:
+    TOMCAT_PASS: admin
   ports:
     - "8080"
