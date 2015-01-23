@@ -5,6 +5,11 @@
         fig stop && fig rm --force -v && fig build && fig up -d && fig ps && fig logs
 
     完成tomcat集群配置，memcached进行session缓存，暂不支持tomcat8.
+        测试：http://192.168.59.103:8080/manager/html admin/admin
+
+    todo:
+        引入nginx4web http://tengine.taobao.org/
+    
 
 2015-01-21
     更换mysql 镜像包

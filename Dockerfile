@@ -35,6 +35,7 @@ RUN  sed -i '/<Executor name="tomcatThreadPool"/,/\/>/{s/4/300/}' /tomcat/conf/s
 RUN  sed -i '/Connector executor="tomcatThreadPool"/a enableLookups="false" URIEncoding="UTF-8" acceptCount="1000"' /tomcat/conf/server.xml
 
 
+
 ##正则表达式编辑xml,增加应用部署目录
 ##**对应的目录必须存在，否则启动会报错
 RUN  sed -i '/<Host/,/<\/Host>/{/<Valve/,/<\/Valve>/{/pattern=/{s/\/>/\/> \n <Context docBase="\/home\/dbtest" path="\/myweb" crossContext="true" privileged="true" \/>/}}}' /tomcat/conf/server.xml
@@ -45,11 +46,22 @@ RUN  sed -i '/<Host/,/<\/Host>/{/<Valve/,/<\/Valve>/{/pattern=/{s/\/>/\/> \n <Co
 
 #集群配置session共享；需要先启动session服务
 RUN  sed  -i '/<Context>/a  \
-      <Manager className="de.javakaffee.web.msm.MemcachedBackupSessionManager"  \
-        memcachedNodes="n1:memcache1:11211,n2:memcache2:11211"  failoverNodes="n1" \
-        requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$"  \
-        transcoderFactoryClass="de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory" \/> \
+      <Manager className="de.javakaffee.web.msm.MemcachedBackupSessionManager" \n \
+        memcachedNodes="n1:memcache1:11211,n2:memcache2:11211"  failoverNodes="n1" \n \
+        requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$"  \n \
+        transcoderFactoryClass="de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory" \/> \n \
     ' /tomcat/conf/context.xml
+
+###增加数据源
+RUN  sed  -i '/<Context>/a  \
+      <Resource name="jdbc/TestDB" auth="Container" type="javax.sql.DataSource" \n \
+                   maxActive="100" maxIdle="30" maxWait="10000" \n \
+                   username="java" password="java" driverClassName="com.mysql.jdbc.Driver" \n \
+                   url="jdbc:mysql://mysql:3306/javatest"/> \n \
+    ' /tomcat/conf/context.xml
+
+
+RUN cat /tomcat/conf/context.xml
 
 #删除注释文件
 RUN sed -i '/<!–/,/–>/d' /tomcat/conf/server.xml
